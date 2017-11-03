@@ -3,11 +3,12 @@
 
 # 
 # created by yjweng01 on 02-11-17
+# debug by yjweng01 and minghust on 03-11-17
 #
 
-from flask import Flask,redirect, url_for, request, session, make_response,flash
+from flask import Flask, request
 import smtplib
-import sqlite3,os
+import sqlite3
 from email.mime.text import MIMEText
 import random
 
@@ -23,8 +24,8 @@ def createVerifiedCode():
 
 
 def sendmail(email, code):
-	_user = "646799248@qq.com"
-	_pwd = "dsgmftihxxdjbcdj"
+	_user = "2856817781@qq.com"
+	_pwd = "ksiuoasxojpfdceb"
 	_to = email
  
 	msg = MIMEText("欢迎注册轻记账！您的校验码是：%s"%code)
@@ -41,30 +42,29 @@ def sendmail(email, code):
 	except smtplib.SMTPException:
 		print ("Falied,%s")
 
-
-
 @app.route('/getcode/',methods = ['GET','POST'])
 def getcode():
 	if request.method == 'POST': 
-        db = sqlite3.connect('database.db')
+		db = sqlite3.connect('database.db')
 		cur = db.cursor()
-		dic = { "userEmail":"", "passwd": "", "code":""}
+		dic = { "userEmail":"", "password": "", "code":""}
 
 		em_list = list()
 		em_list.append(request.form['email'])
 		a = tuple(em_list)
-		whether_exit = cur.execute("select * from user where name = ?",a).fetchall()
+		whether_exit = cur.execute("select * from user where email = ?",a).fetchall()
 		db.close()
 		if whether_exit:
 			return "False" # If the mail has been registed, return "False" to show that.
 		else:
+			print("here")
 			code = createVerifiedCode()
 			sendmail(request.form['email'], code)
 			dic["userEmail"] = request.form['email']
-			dic["passwd"] = request.form['passwd']
+			dic["password"] = request.form['password']
 			dic["code"] = code
 			userList.append(dic)
-			return "True" # If the mail has not been registed, send the verified code.
+			return "True"
 
 
 @app.route('/register/',methods = ['GET','POST'])
@@ -80,14 +80,14 @@ def register():
 					em_list.append(request.form['password'])
 					a = tuple(em_list)
 					cur.execute("INSERT INTO user VALUES (?,?)",a)
-					cursor.commit()
-					cursor.close()
+					cur.close()
+					db.commit()
 					db.close()
 					userList.remove(em)
 					return "success" # 注册成功 跳转页面
 				else:
-					return "codeError" # 验证码错误 
-		return "emailError" # 找不到该邮箱 		
+					return "codeError" # 验证码错误
+		return "emailError" # 找不到该邮箱
 
 @app.route('/login/',methods = ['GET','POST'])
 def login():
@@ -95,16 +95,16 @@ def login():
 		db = sqlite3.connect('database.db')
 		cur = db.cursor()
 		em_list = list()
-		em_list.append(request.form['user'])
+		em_list.append(request.form['email'])
 		a = tuple(em_list)
-		cur.execute("select * from user where name = ?",a)
-		cursor.close()
-		db.close()
+		cur.execute("select * from user where email = ?",a)
 		whether_exist = cur.fetchall()
+		cur.close()
+		db.close()
 		if whether_exist == []:
-			return "emailError" #用户不存在     
+			return "emailError" #用户不存在
 		elif request.form['password'] != whether_exist[0][1]:
-			return "passwdError" # 密码输入错误
+			return "passwordError" # 密码输入错误
 		else:
 			return "success" # 密码输入正确，成功登陆
 
@@ -112,5 +112,4 @@ if __name__ == '__main__':
 	app.run(
         host = '0.0.0.0',
         port = 5050,
-        debug = True
     )
