@@ -1,6 +1,6 @@
 API
 1. get verification code
-POST /aymbook/getcode
+POST /getcode
 {
 	email: str,
 	passwd: str
@@ -11,7 +11,7 @@ return
 }
 
 2. register
-POST /aymbook/register
+POST /register
 {
 	email: str,
 	passwd: str,
@@ -24,7 +24,7 @@ return
 }
 
 3. login
-POST /asymbook/login
+POST /login
 {
 	email: str,
 	passwd: str
