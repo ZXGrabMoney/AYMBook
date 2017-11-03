@@ -1,0 +1,35 @@
+API
+1. get verification code
+POST /aymbook/getcode
+{
+	email: str,
+	passwd: str
+}
+return
+{
+	re: str // return "True" or "False"
+}
+
+2. register
+POST /aymbook/register
+{
+	email: str,
+	passwd: str,
+	code: str
+}
+return
+{
+	re: str // return "success" or "emailError" or "codeError"
+
+}
+
+3. login
+POST /asymbook/login
+{
+	email: str,
+	passwd: str
+}
+return
+{
+	re: str // return "success" or "emailError" or "passwdError"
+}
