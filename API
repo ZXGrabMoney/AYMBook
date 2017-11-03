@@ -3,7 +3,7 @@ API
 POST /getcode
 {
 	email: str,
-	passwd: str
+	password: str
 }
 return
 {
@@ -14,7 +14,7 @@ return
 POST /register
 {
 	email: str,
-	passwd: str,
+	password: str,
 	code: str
 }
 return
@@ -27,7 +27,7 @@ return
 POST /login
 {
 	email: str,
-	passwd: str
+	password: str
 }
 return
 {
